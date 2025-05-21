@@ -6,7 +6,7 @@
 
 body {
     overflow: hidden;
-    font-family: Arial, sans-serif;
+    font-family: 'Noto Sans KR', Arial, sans-serif;
 }
 
 .container {
@@ -19,21 +19,36 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('office-background.jpg'); /* 이미지 파일명 지정 */
+    width: 100vw;
+    height: 100vh;
+    background-image: url('RUID99c441df4f404408ab908ecb71f94a1c.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     z-index: 1;
 }
 
+.center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    color: #fff;
+    font-size: 3vw;
+    font-weight: bold;
+    text-shadow: 0 2px 8px #222, 0 0 30px #00c8ff;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
 #fireworksCanvas, #moneyCanvas {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: 2;
     pointer-events: none;
 }

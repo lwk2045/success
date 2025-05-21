@@ -4,18 +4,15 @@ const fireworksCtx = fireworksCanvas.getContext('2d');
 const moneyCanvas = document.getElementById('moneyCanvas');
 const moneyCtx = moneyCanvas.getContext('2d');
 
-// 캔버스 크기 설정
 function resizeCanvas() {
     fireworksCanvas.width = window.innerWidth;
     fireworksCanvas.height = window.innerHeight;
     moneyCanvas.width = window.innerWidth;
     moneyCanvas.height = window.innerHeight;
 }
-
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// 색상 배열
 const colors = [
     '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
     '#FF00FF', '#00FFFF', '#FFA500', '#FF4500',
@@ -29,7 +26,6 @@ class Firework {
         this.exploded = false;
         this.particles = [];
     }
-
     reset() {
         this.x = Math.random() * fireworksCanvas.width;
         this.y = fireworksCanvas.height;
@@ -45,32 +41,25 @@ class Firework {
         this.exploded = false;
         this.particles = [];
     }
-
     update() {
         if (!this.exploded) {
             this.x += this.velocity.x;
             this.y += this.velocity.y;
-
-            // 목표 위치에 도달하면 폭발
             if (Math.abs(this.x - this.targetX) < 5 && Math.abs(this.y - this.targetY) < 5) {
                 this.explode();
             }
         } else {
-            // 파티클 업데이트
             for (let i = this.particles.length - 1; i >= 0; i--) {
                 this.particles[i].update();
                 if (this.particles[i].alpha <= 0) {
                     this.particles.splice(i, 1);
                 }
             }
-
-            // 모든 파티클이 사라지면 새 폭죽 생성
             if (this.particles.length === 0) {
                 this.reset();
             }
         }
     }
-
     explode() {
         this.exploded = true;
         for (let i = 0; i < 100; i++) {
@@ -78,7 +67,6 @@ class Firework {
             this.particles.push(particle);
         }
     }
-
     draw() {
         if (!this.exploded) {
             fireworksCtx.beginPath();
@@ -86,7 +74,6 @@ class Firework {
             fireworksCtx.fillStyle = this.color;
             fireworksCtx.fill();
         } else {
-            // 파티클 그리기
             for (const particle of this.particles) {
                 particle.draw();
             }
@@ -111,14 +98,12 @@ class Particle {
         this.size = Math.random() * 3 + 1;
         this.gravity = 0.05;
     }
-
     update() {
         this.velocity.y += this.gravity;
         this.x += this.velocity.x;
         this.y += this.velocity.y;
         this.alpha -= this.decay;
     }
-
     draw() {
         fireworksCtx.save();
         fireworksCtx.globalAlpha = this.alpha;
@@ -139,7 +124,6 @@ class Money {
         this.height = 20;
         this.reset();
     }
-
     reset() {
         this.x = Math.random() * moneyCanvas.width;
         this.y = -this.height - Math.random() * 100;
@@ -149,7 +133,6 @@ class Money {
         this.swingFactor = Math.random() * 3;
         this.swingOffset = Math.random() * Math.PI * 2;
     }
-
     getRandomMoneyImage() {
         const moneyImages = [
             'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzAwODgwMCIgLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIzMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IiNmZmZmZmYiPiQxMDA8L3RleHQ+PC9zdmc+',
@@ -158,18 +141,14 @@ class Money {
         ];
         return moneyImages[Math.floor(Math.random() * moneyImages.length)];
     }
-
     update() {
         this.y += this.speed;
         this.rotation += this.rotationSpeed;
         this.x += Math.sin(this.y * 0.03 + this.swingOffset) * this.swingFactor;
-
-        // 화면 밖으로 나가면 재설정
         if (this.y > moneyCanvas.height + this.height) {
             this.reset();
         }
     }
-
     draw() {
         moneyCtx.save();
         moneyCtx.translate(this.x, this.y);
@@ -191,47 +170,26 @@ for (let i = 0; i < 5; i++) {
 // 초기 돈 생성
 for (let i = 0; i < 50; i++) {
     const money = new Money();
-    // 초기에 화면에 분산
     money.y = Math.random() * moneyCanvas.height;
     moneyBills.push(money);
 }
 
 // 애니메이션 루프
 function animate() {
-    // 캔버스 지우기
     fireworksCtx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
     moneyCtx.clearRect(0, 0, moneyCanvas.width, moneyCanvas.height);
 
-    // 폭죽 업데이트 및 그리기
     for (const firework of fireworks) {
         firework.update();
         firework.draw();
     }
-
-    // 돈 업데이트 및 그리기
     for (const money of moneyBills) {
         money.update();
         money.draw();
     }
-
-    // 랜덤하게 새 폭죽 추가
     if (Math.random() < 0.02 && fireworks.length < 10) {
         fireworks.push(new Firework());
     }
-
     requestAnimationFrame(animate);
 }
-
-// 애니메이션 시작
 animate();
-
-// 이미지 로드를 위한 도움 함수
-function preloadImages() {
-    moneyBills.forEach(money => {
-        money.image.onload = () => {
-            money.loaded = true;
-        };
-    });
-}
-
-preloadImages();
